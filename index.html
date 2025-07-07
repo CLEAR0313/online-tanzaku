@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>七夕オンライン短冊イベント</title>
   <style>
     body {
@@ -12,10 +12,30 @@
       padding: 20px;
     }
     h1 { color: #8A2BE2; }
-    .tanzaku-form { background: #FFF0F5; border-radius: 15px; padding: 20px; max-width: 400px; margin: auto; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-    input, textarea { width: 90%; padding: 10px; margin: 10px 0; border-radius: 5px; border: 1px solid #ccc; }
-    button { background-color: #8A2BE2; color: white; padding: 10px 20px; border-radius: 8px; border: none; cursor: pointer; }
-    .tanzaku-wall { margin-top: 30px; }
+    .tanzaku-form {
+      background: #FFF0F5;
+      border-radius: 15px;
+      padding: 20px;
+      max-width: 400px;
+      margin: auto;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    input, textarea, select, button {
+      width: 90%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background-color: #8A2BE2;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    .tanzaku-wall {
+      margin-top: 30px;
+    }
     .wish {
       width: 140px;
       height: 280px;
@@ -33,52 +53,82 @@
       background-position: center;
       position: relative;
     }
-    .wish strong { margin-top: auto; background: rgba(255,255,255,0.7); width: 100%; text-align: center; }
-    .wish .text { flex-grow:1; padding: 5px; background: rgba(255,255,255,0.7); width: 100%; text-align: center; word-wrap: break-word; }
+    .wish .text {
+      flex-grow: 1;
+      padding: 5px;
+      background: rgba(255,255,255,0.7);
+      width: 100%;
+      text-align: center;
+      word-wrap: break-word;
+    }
+    .wish strong {
+      background: rgba(255,255,255,0.7);
+      width: 100%;
+      text-align: center;
+    }
   </style>
 </head>
 <body>
-  <h1>🌟 七夕オンライン短冊イベント 🎋</h1>
-  <p>願いごとを書いて、花火柄の短冊にしよう！✨</p>
+  <h1>🎋 七夕オンライン短冊イベント 🎋</h1>
+  <p>あなたの願いごとを選んだ短冊に込めて星に届けましょう🌟</p>
   <div class="tanzaku-form">
-    <input type="text" id="name" placeholder="お名前(例：ゆかり)"><br>
-    <textarea id="wish" placeholder="願いごとをここに書いてください"></textarea><br>
+    <input type="text" id="name" placeholder="お名前（ニックネーム可）"><br>
+    <textarea id="wish" placeholder="あなたの願いごとをここに書いてください"></textarea><br>
+    <select id="pattern">
+      <option value="0">ピンク</option>
+      <option value="1">黄色</option>
+      <option value="2">緑色</option>
+      <option value="3">紫色</option>
+      <option value="4">青色</option>
+    </select><br>
     <button onclick="submitWish()">短冊を飾る</button>
   </div>
+
   <div class="tanzaku-wall" id="wall">
-    <h2>みんなの短冊一覧🎐</h2>
+    <h2>みんなの短冊一覧🌌</h2>
   </div>
 
   <script>
-    const STORAGE_KEY = 'tanzaku_wishes';
+    const STORAGE_KEY = 'tanzaku_wishes_v2';
     const patterns = [
-      'https://drive.google.com/file/d/1MFYtiA9u_l00KyNyDexlRZoGO-mqRtJC/view?usp=drive_link',
-      'url(花火柄2.png)',
-      'url(花火柄3.png)',
-      'url(花火柄4.png)',
-      'url(花火柄5.png)',
-      'url(花火柄6.png)'
+      'url("https://drive.google.com/uc?export=view&id=1MFYtiA9u_l00KyNyDexlRZoGO-mqRtJC")',
+      'url("https://drive.google.com/uc?export=view&id=1urovq9GPkJ3vBapacZyc39DWphVqg-G4")',
+      'url("https://drive.google.com/uc?export=view&id=15g9PUKGkE0ZapTvHUsx42gxdUrVBsMJo")',
+      'url("https://drive.google.com/uc?export=view&id=13hTRUx-Q7DMPdr3lTwzoJWhSXQYopGy-")',
+      'url("https://drive.google.com/uc?export=view&id=1sYZzUKmL1EdBJnZULYqAf2843FzxJ30j")'
     ];
 
+    // 保存されている短冊を表示
     window.addEventListener('DOMContentLoaded', () => {
       const saved = localStorage.getItem(STORAGE_KEY);
       const wishes = saved ? JSON.parse(saved) : [];
-      wishes.forEach(w => addWishElement(w));
+      wishes.forEach(addWishElement);
     });
 
     function submitWish() {
       const name = document.getElementById("name").value.trim() || '匿名';
       const wish = document.getElementById("wish").value.trim();
-      if (!wish) return alert('願いごとを入力してください');
-      const idx = Math.floor(Math.random() * patterns.length);
-      const newWish = { name, wish, pattern: patterns[idx] };
-      addWishElement(newWish);
-      saveWish(newWish);
-      document.getElementById("name").value = '';
-      document.getElementById("wish").value = '';
+      const patternIdx = document.getElementById("pattern").value;
+
+      if (!wish) {
+        alert("願いごとを入力してください");
+        return;
+      }
+
+      const wishData = {
+        name: name,
+        wish: wish,
+        pattern: patterns[patternIdx]
+      };
+
+      addWishElement(wishData);
+      saveWish(wishData);
+
+      document.getElementById("name").value = "";
+      document.getElementById("wish").value = "";
     }
 
-    function addWishElement({name,wish,pattern}) {
+    function addWishElement({name, wish, pattern}) {
       const wall = document.getElementById("wall");
       const el = document.createElement("div");
       el.className = 'wish';
@@ -87,11 +137,11 @@
       wall.appendChild(el);
     }
 
-    function saveWish(obj) {
+    function saveWish(wishObj) {
       const saved = localStorage.getItem(STORAGE_KEY);
-      const arr = saved ? JSON.parse(saved) : [];
-      arr.push(obj);
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
+      const wishes = saved ? JSON.parse(saved) : [];
+      wishes.push(wishObj);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(wishes));
     }
   </script>
 </body>
