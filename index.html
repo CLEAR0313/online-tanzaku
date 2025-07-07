@@ -37,34 +37,38 @@
       margin-top: 30px;
     }
     .wish {
-      width: 140px;
-      height: 280px;
+      width: 160px;
+      height: auto;
       padding: 10px;
       margin: 10px;
       box-sizing: border-box;
       border-radius: 8px;
-      border: 1px dashed #8A2BE2;
       display: inline-flex;
       flex-direction: column;
       justify-content: flex-start;
       align-items: center;
       color: #333;
-      background-size: cover;
-      background-position: center;
-      position: relative;
+      background: #ffffffaa;
+    }
+    .wish img {
+      width: 100%;
+      height: auto;
+      max-height: 200px;
+      object-fit: contain;
+      margin-bottom: 8px;
     }
     .wish .text {
-      flex-grow: 1;
       padding: 5px;
-      background: rgba(255,255,255,0.7);
+      background: rgba(255,255,255,0.8);
       width: 100%;
       text-align: center;
       word-wrap: break-word;
     }
     .wish strong {
-      background: rgba(255,255,255,0.7);
+      background: rgba(255,255,255,0.8);
       width: 100%;
       text-align: center;
+      margin-top: 5px;
     }
   </style>
 </head>
@@ -89,14 +93,13 @@
   </div>
 
   <script>
-    const STORAGE_KEY = 'tanzaku_wishes_v2';
+    const STORAGE_KEY = 'tanzaku_wishes_v3';
     const patterns = [
-      '   <img src="https://drive.google.com/uc?export=view&id=【1urovq9GPkJ3vBapacZyc39DWphVqg-G4】" style="width: 100%; height: auto;" alt="短冊1">
-  </div>,
-      'url("https://drive.google.com/file/d/1MFYtiA9u_l00KyNyDexlRZoGO-mqRtJC/view?usp=drive_link")',
-      'url("https://drive.google.com/file/d/13hTRUx-Q7DMPdr3lTwzoJWhSXQYopGy-/view?usp=drive_link")',
-      'url("https://drive.google.com/file/d/15g9PUKGkE0ZapTvHUsx42gxdUrVBsMJo/view?usp=drive_link")',
-      'url("https://drive.google.com/file/d/1sYZzUKmL1EdBJnZULYqAf2843FzxJ30j/view?usp=drive_link")'
+      'https://wp.app-clear.com/wp-content/uploads/2025/07/短冊3.png',
+      'https://wp.app-clear.com/wp-content/uploads/2025/07/短冊5.png',
+      'https://wp.app-clear.com/wp-content/uploads/2025/07/短冊4.png',
+      'https://wp.app-clear.com/wp-content/uploads/2025/07/短冊2.png',
+      'https://wp.app-clear.com/wp-content/uploads/2025/07/短冊1.png'
     ];
 
     // 保存されている短冊を表示
@@ -133,8 +136,11 @@
       const wall = document.getElementById("wall");
       const el = document.createElement("div");
       el.className = 'wish';
-      el.style.backgroundImage = pattern;
-      el.innerHTML = `<div class="text">${wish}</div><strong>${name}</strong>`;
+      el.innerHTML = `
+        <img src="${pattern}" alt="短冊">
+        <div class="text">${wish}</div>
+        <strong>${name}</strong>
+      `;
       wall.appendChild(el);
     }
 
