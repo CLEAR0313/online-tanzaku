@@ -1,149 +1,89 @@
-/*
-プロジェクト構成：
-
-📁 online-tanzaku/
-├── server.js
-├── package.json
-├── public/
-│   ├── index.html         ← 投稿ページ
-│   ├── hiroba.html         ← 一覧表示ページ
-│   ├── style.css
-│   ├── post.js
-│   └── hiroba.js
-└── data/
-    └── tanzaku.json
-*/
-
-// ==== package.json ====
-{
-  "name": "online-tanzaku",
-  "version": "1.0.0",
-  "main": "server.js",
-  "scripts": {
-    "start": "node server.js"
-  },
-  "dependencies": {
-    "express": "^4.18.0",
-    "body-parser": "^1.20.0"
-  }
-}
-
-// ==== server.js ====
-const express = require('express');
-const bodyParser = require('body-parser');
-const fs = require('fs');
-const path = require('path');
-
-const app = express();
-const PORT = process.env.PORT || 3000;
-const DB_PATH = path.join(__dirname, 'data', 'tanzaku.json');
-
-app.use(bodyParser.json());
-app.use(express.static('public'));
-
-app.get('/api/tanzaku', (req, res) => {
-  const data = fs.existsSync(DB_PATH) ? JSON.parse(fs.readFileSync(DB_PATH)) : [];
-  res.json(data);
-});
-
-app.post('/api/tanzaku', (req, res) => {
-  const { name, wish, color } = req.body;
-  if (!name || !wish || !color) return res.status(400).json({ error: 'Invalid input' });
-  const newEntry = { name, wish, color, date: new Date() };
-  const data = fs.existsSync(DB_PATH) ? JSON.parse(fs.readFileSync(DB_PATH)) : [];
-  data.unshift(newEntry);
-  fs.writeFileSync(DB_PATH, JSON.stringify(data, null, 2));
-  res.json({ success: true });
-});
-
-app.listen(PORT, () => console.log(`Server running at http://localhost:${PORT}`));
-
-// ==== public/index.html ====
 <!DOCTYPE html>
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>短冊に願いを書く</title>
-  <link rel="stylesheet" href="style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>七夕オンライン短冊イベント</title>
+  <style>
+    body {
+      background: linear-gradient(to bottom, #FFEAFF, #E0F7FF);
+      font-family: 'Segoe UI', sans-serif;
+      text-align: center;
+      padding: 20px;
+    }
+    h1 {
+      color: #8A2BE2;
+    }
+    .tanzaku-form {
+      background: #FFF0F5;
+      border-radius: 15px;
+      padding: 20px;
+      max-width: 400px;
+      margin: 0 auto;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    input, textarea, select {
+      width: 90%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background-color: #8A2BE2;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .tanzaku-wall {
+      margin-top: 30px;
+    }
+    .wish {
+      background: #FFEFD5;
+      border: 1px dashed #8A2BE2;
+      border-radius: 8px;
+      padding: 10px;
+      margin: 10px;
+      display: inline-block;
+      max-width: 200px;
+      word-wrap: break-word;
+    }
+  </style>
 </head>
 <body>
-  <h1>🎋 短冊に願いを込めて 🎋</h1>
-  <div class="form">
-    <label>お名前：<input id="name" type="text"></label><br>
-    <label>願い事：<input id="wish" type="text"></label><br>
-    <label>短冊の色：
-      <select id="color">
-        <option value="#ff6666">赤</option>
-        <option value="#66ccff">青</option>
-        <option value="#ffff66">黄</option>
-        <option value="#66ff66">緑</option>
-        <option value="#cc66ff">紫</option>
-      </select>
-    </label><br>
-    <button id="submit">投稿する</button>
+  <h1>🌟 七夕オンライン短冊イベント 🎋</h1>
+  <p>あなたの願いごとを短冊に込めて、星に届けよう✨</p>
+  <div class="tanzaku-form">
+    <input type="text" id="name" placeholder="お名前(ニックネーム可)"><br>
+    <textarea id="wish" placeholder="あなたの願いごとをここに書いてください"></textarea><br>
+    <label for="color">短冊のカラーを選択:</label><br>
+    <input type="color" id="color" value="#FFEFD5"><br><br>
+    <button onclick="submitWish()">短冊を飾る</button>
   </div>
-  <script src="post.js"></script>
+  <div class="tanzaku-wall" id="wall">
+    <h2>みんなの短冊🎐</h2>
+  </div>
+  <script>
+    function submitWish() {
+      const name = document.getElementById("name").value.trim();
+      const wish = document.getElementById("wish").value.trim();
+      const color = document.getElementById("color").value;
+      if (!wish) {
+        alert("願いごとを入力してください");
+        return;
+      }
+      const wall = document.getElementById("wall");
+      const wishElement = document.createElement("div");
+      wishElement.className = "wish";
+      wishElement.style.backgroundColor = color;
+      wishElement.innerHTML = `<strong>${name || "匿名"}</strong><br>${wish}`;
+      wall.appendChild(wishElement);
+      document.getElementById("name").value = "";
+      document.getElementById("wish").value = "";
+      document.getElementById("color").value = "#FFEFD5";
+    }
+  </script>
 </body>
 </html>
-
-// ==== public/post.js ====
-document.getElementById('submit').onclick = async () => {
-  const name = document.getElementById('name').value.trim();
-  const wish = document.getElementById('wish').value.trim();
-  const color = document.getElementById('color').value;
-  if (!name || !wish) return alert('名前と願い事を入力してください');
-  await fetch('/api/tanzaku', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ name, wish, color })
-  });
-  window.location.href = '/hiroba.html';
-};
-
-// ==== public/hiroba.html ====
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-  <meta charset="UTF-8">
-  <title>みんなの短冊広場</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <h1>🎋 みんなの短冊 🎋</h1>
-  <div id="list" class="grid"></div>
-  <script src="hiroba.js"></script>
-</body>
-</html>
-
-// ==== public/hiroba.js ====
-fetch('/api/tanzaku')
-  .then(res => res.json())
-  .then(data => {
-    const list = document.getElementById('list');
-    data.forEach(t => {
-      const div = document.createElement('div');
-      div.className = 'tanzaku';
-      div.style.background = t.color;
-      div.innerHTML = `<strong>${t.name}</strong><br>${t.wish}`;
-      list.appendChild(div);
-    });
-  });
-
-// ==== public/style.css ====
-body { font-family: sans-serif; text-align: center; background: #f2f2f2; }
-input, select { margin: 5px; padding: 5px; }
-.tanzaku {
-  width: 140px; padding: 12px; margin: 12px;
-  background: #eee; color: #000;
-  border-radius: 8px;
-  display: inline-block; text-align: center;
-  box-shadow: 2px 2px 6px rgba(0,0,0,0.2);
-}
-.grid {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-.form { margin: 30px auto; width: 320px; background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 0 8px rgba(0,0,0,0.1); }
-
-/* End of full online tanzaku app */
