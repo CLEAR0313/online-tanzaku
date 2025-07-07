@@ -11,7 +11,9 @@
       text-align: center;
       padding: 20px;
     }
+
     h1 { color: #8A2BE2; }
+
     .tanzaku-form {
       background: #FFF0F5;
       border-radius: 15px;
@@ -20,6 +22,7 @@
       margin: auto;
       box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
+
     input, textarea, select, button {
       width: 90%;
       padding: 10px;
@@ -27,54 +30,66 @@
       border-radius: 5px;
       border: 1px solid #ccc;
     }
+
     button {
       background-color: #8A2BE2;
       color: white;
       border: none;
       cursor: pointer;
     }
+
     .tanzaku-wall {
       margin-top: 30px;
     }
+
     .wish {
-      width: 160px;
-      height: auto;
-      padding: 10px;
+      position: relative;
+      display: inline-block;
+      width: 140px;
+      height: 280px;
       margin: 10px;
-      box-sizing: border-box;
-      border-radius: 8px;
-      display: inline-flex;
+      background-size: cover;
+      background-position: center;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+
+    .wish .overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
       flex-direction: column;
-      justify-content: flex-start;
-      align-items: center;
+      justify-content: space-between;
+      padding: 10px;
+      box-sizing: border-box;
+      background: rgba(255,255,255,0); /* transparent to keep background image visible */
       color: #333;
-      background: #ffffffaa;
+      font-size: 14px;
+      text-align: center;
+      word-break: break-word;
     }
-    .wish img {
-      width: 100%;
-      height: auto;
-      max-height: 200px;
-      object-fit: contain;
-      margin-bottom: 8px;
-    }
-    .wish .text {
+
+    .wish .overlay .text {
+      background: rgba(255,255,255,0.7);
       padding: 5px;
-      background: rgba(255,255,255,0.8);
-      width: 100%;
-      text-align: center;
-      word-wrap: break-word;
+      border-radius: 4px;
     }
-    .wish strong {
-      background: rgba(255,255,255,0.8);
-      width: 100%;
-      text-align: center;
-      margin-top: 5px;
+
+    .wish .overlay .name {
+      font-weight: bold;
+      background: rgba(255,255,255,0.7);
+      border-radius: 4px;
+      padding: 3px;
     }
   </style>
 </head>
 <body>
   <h1>🎋 七夕オンライン短冊イベント 🎋</h1>
   <p>あなたの願いごとを選んだ短冊に込めて星に届けましょう🌟</p>
+
   <div class="tanzaku-form">
     <input type="text" id="name" placeholder="お名前（ニックネーム可）"><br>
     <textarea id="wish" placeholder="あなたの願いごとをここに書いてください"></textarea><br>
@@ -93,8 +108,9 @@
   </div>
 
   <script>
-    const STORAGE_KEY = 'tanzaku_wishes_v3';
-    const patterns = [
+    const STORAGE_KEY = 'tanzaku_wishes_v4';
+
+    const backgrounds = [
       'https://wp.app-clear.com/wp-content/uploads/2025/07/短冊3.png',
       'https://wp.app-clear.com/wp-content/uploads/2025/07/短冊5.png',
       'https://wp.app-clear.com/wp-content/uploads/2025/07/短冊4.png',
@@ -102,7 +118,7 @@
       'https://wp.app-clear.com/wp-content/uploads/2025/07/短冊1.png'
     ];
 
-    // 保存されている短冊を表示
+    // 表示処理
     window.addEventListener('DOMContentLoaded', () => {
       const saved = localStorage.getItem(STORAGE_KEY);
       const wishes = saved ? JSON.parse(saved) : [];
@@ -122,7 +138,7 @@
       const wishData = {
         name: name,
         wish: wish,
-        pattern: patterns[patternIdx]
+        background: backgrounds[patternIdx]
       };
 
       addWishElement(wishData);
@@ -132,14 +148,16 @@
       document.getElementById("wish").value = "";
     }
 
-    function addWishElement({name, wish, pattern}) {
+    function addWishElement({name, wish, background}) {
       const wall = document.getElementById("wall");
       const el = document.createElement("div");
       el.className = 'wish';
+      el.style.backgroundImage = `url('${background}')`;
       el.innerHTML = `
-        <img src="${pattern}" alt="短冊">
-        <div class="text">${wish}</div>
-        <strong>${name}</strong>
+        <div class="overlay">
+          <div class="text">${wish}</div>
+          <div class="name">${name}</div>
+        </div>
       `;
       wall.appendChild(el);
     }
