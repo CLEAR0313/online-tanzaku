@@ -1,0 +1,116 @@
+# online-tanzaku
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>オンライン短冊</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background: #ffe4e1;
+      margin: 0;
+      padding: 20px;
+      text-align: center;
+    }
+    .notice {
+      background: #fff;
+      border-radius: 10px;
+      padding: 10px;
+      margin-bottom: 20px;
+      font-size: 14px;
+    }
+    .step-title {
+      background: #9370db;
+      color: #fff;
+      padding: 10px;
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+    .tanzaku-list {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .tanzaku {
+      cursor: pointer;
+      border: 2px solid transparent;
+      border-radius: 8px;
+      transition: border-color 0.3s;
+    }
+    .tanzaku:hover {
+      border-color: #ff69b4;
+    }
+    .form-container {
+      display: none;
+      margin-top: 20px;
+    }
+    .form-container textarea, .form-container input {
+      width: 80%;
+      max-width: 300px;
+      padding: 10px;
+      margin: 10px auto;
+      display: block;
+      font-size: 16px;
+    }
+    .form-container button {
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #9370db;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h2>短冊の色を選び、願いごとをお書き下さい。</h2>
+
+  <div class="notice">
+    <strong>投稿時の注意事項</strong><br>
+    ・投稿された願いごとは本サイト内でも閲覧できます<br>
+    ・不適切と判断される投稿内容に関しましては、表示されない場合があります<br>
+    ・絵文字、記号など一部正確に表示できない場合があります<br>
+    ・文字数は1行20文字、3行まで60文字です<br>
+    ・名前は最大20文字です<br>
+  </div>
+
+  <div class="step-title">STEP 1<br>短冊を選ぼう！</div>
+
+  <div class="tanzaku-list">
+    <img src="https://example.com/tanzaku1.png" alt="短冊1" class="tanzaku" onclick="selectTanzaku(1)">
+    <img src="https://example.com/tanzaku2.png" alt="短冊2" class="tanzaku" onclick="selectTanzaku(2)">
+    <img src="https://example.com/tanzaku3.png" alt="短冊3" class="tanzaku" onclick="selectTanzaku(3)">
+    <img src="https://example.com/tanzaku4.png" alt="短冊4" class="tanzaku" onclick="selectTanzaku(4)">
+    <img src="https://example.com/tanzaku5.png" alt="短冊5" class="tanzaku" onclick="selectTanzaku(5)">
+  </div>
+
+  <div class="form-container" id="formContainer">
+    <h3>お願いごとを入力してください</h3>
+    <textarea id="wish" rows="3" maxlength="60" placeholder="1行ずつ改行して記入 (最大3行まで)"></textarea>
+    <input type="text" id="name" maxlength="20" placeholder="お名前 (ニックネーム可)">
+    <button onclick="submitWish()">短冊にかける✨</button>
+  </div>
+
+  <script>
+    function selectTanzaku(id) {
+      document.getElementById('formContainer').style.display = 'block';
+    }
+
+    function submitWish() {
+      const wish = document.getElementById('wish').value;
+      const name = document.getElementById('name').value;
+      if (!wish || !name) {
+        alert('お願いごととお名前の入力は必須です。');
+        return;
+      }
+      alert("短冊に願いが投稿されました！\n\n願い事:\n" + wish + "\n名前: " + name);
+      document.getElementById('wish').value = '';
+      document.getElementById('name').value = '';
+      document.getElementById('formContainer').style.display = 'none';
+    }
+  </script>
+</body>
+</html>
