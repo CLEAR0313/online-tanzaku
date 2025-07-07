@@ -35,6 +35,9 @@
     }
     .tanzaku-wall {
       margin-top: 30px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
     }
     .wish {
       width: 140px;
@@ -100,7 +103,7 @@
     function submitWish() {
       const name = document.getElementById("name").value.trim() || '匿名';
       const wish = document.getElementById("wish").value.trim();
-      const patternIdx = document.getElementById("pattern").value;
+      const patternIdx = parseInt(document.getElementById("pattern").value, 10);
 
       if (!wish) {
         alert("願いごとを入力してください");
