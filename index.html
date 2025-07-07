@@ -1,12 +1,12 @@
 /*
 プロジェクト構成：
 
-📁 tanzaku-app/
+📁 online-tanzaku/
 ├── server.js
 ├── package.json
 ├── public/
-│   ├── index.html   ← 投稿ページ
-│   ├── hiroba.html   ← 一覧表示ページ
+│   ├── index.html         ← 投稿ページ
+│   ├── hiroba.html         ← 一覧表示ページ
 │   ├── style.css
 │   ├── post.js
 │   └── hiroba.js
@@ -16,7 +16,7 @@
 
 // ==== package.json ====
 {
-  "name": "tanzaku-app",
+  "name": "online-tanzaku",
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
@@ -71,16 +71,16 @@ app.listen(PORT, () => console.log(`Server running at http://localhost:${PORT}`)
   <div class="form">
     <label>お名前：<input id="name" type="text"></label><br>
     <label>願い事：<input id="wish" type="text"></label><br>
-    <label>色を選んでね：
+    <label>短冊の色：
       <select id="color">
-        <option value="#f66">赤</option>
-        <option value="#6cf">青</option>
-        <option value="#fc6">黄</option>
-        <option value="#6f6">緑</option>
-        <option value="#c6f">紫</option>
+        <option value="#ff6666">赤</option>
+        <option value="#66ccff">青</option>
+        <option value="#ffff66">黄</option>
+        <option value="#66ff66">緑</option>
+        <option value="#cc66ff">紫</option>
       </select>
     </label><br>
-    <button id="submit">短冊を投稿する</button>
+    <button id="submit">投稿する</button>
   </div>
   <script src="post.js"></script>
 </body>
@@ -109,7 +109,7 @@ document.getElementById('submit').onclick = async () => {
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>🌟 みんなの願い 🌟</h1>
+  <h1>🎋 みんなの短冊 🎋</h1>
   <div id="list" class="grid"></div>
   <script src="hiroba.js"></script>
 </body>
@@ -130,15 +130,20 @@ fetch('/api/tanzaku')
   });
 
 // ==== public/style.css ====
-body { font-family: sans-serif; text-align: center; background: #f9f9f9; }
-input, select { margin: 5px; }
+body { font-family: sans-serif; text-align: center; background: #f2f2f2; }
+input, select { margin: 5px; padding: 5px; }
 .tanzaku {
-  width: 120px; padding: 10px; margin: 10px;
-  color: #000; background: #eee; border-radius: 8px;
+  width: 140px; padding: 12px; margin: 12px;
+  background: #eee; color: #000;
+  border-radius: 8px;
   display: inline-block; text-align: center;
-  box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+  box-shadow: 2px 2px 6px rgba(0,0,0,0.2);
 }
-.grid { display: flex; flex-wrap: wrap; justify-content: center; }
-.form { margin: 30px auto; width: 300px; }
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.form { margin: 30px auto; width: 320px; background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 0 8px rgba(0,0,0,0.1); }
 
-/* End of full app */
+/* End of full online tanzaku app */
