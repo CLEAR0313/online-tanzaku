@@ -1,27 +1,144 @@
+/*
+プロジェクト構成：
+
+📁 tanzaku-app/
+├── server.js
+├── package.json
+├── public/
+│   ├── index.html   ← 投稿ページ
+│   ├── hiroba.html   ← 一覧表示ページ
+│   ├── style.css
+│   ├── post.js
+│   └── hiroba.js
+└── data/
+    └── tanzaku.json
+*/
+
+// ==== package.json ====
+{
+  "name": "tanzaku-app",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.0",
+    "body-parser": "^1.20.0"
+  }
+}
+
+// ==== server.js ====
+const express = require('express');
+const bodyParser = require('body-parser');
+const fs = require('fs');
+const path = require('path');
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+const DB_PATH = path.join(__dirname, 'data', 'tanzaku.json');
+
+app.use(bodyParser.json());
+app.use(express.static('public'));
+
+app.get('/api/tanzaku', (req, res) => {
+  const data = fs.existsSync(DB_PATH) ? JSON.parse(fs.readFileSync(DB_PATH)) : [];
+  res.json(data);
+});
+
+app.post('/api/tanzaku', (req, res) => {
+  const { name, wish, color } = req.body;
+  if (!name || !wish || !color) return res.status(400).json({ error: 'Invalid input' });
+  const newEntry = { name, wish, color, date: new Date() };
+  const data = fs.existsSync(DB_PATH) ? JSON.parse(fs.readFileSync(DB_PATH)) : [];
+  data.unshift(newEntry);
+  fs.writeFileSync(DB_PATH, JSON.stringify(data, null, 2));
+  res.json({ success: true });
+});
+
+app.listen(PORT, () => console.log(`Server running at http://localhost:${PORT}`));
+
+// ==== public/index.html ====
 <!DOCTYPE html>
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>短冊投稿広場</title>
-  <style>
-    .tanzaku { display: inline-block; width: 120px; margin: 8px; padding: 8px; color: #fff; }
-  </style>
+  <title>短冊に願いを書く</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>短冊に願いを書いて投稿しよう🎋</h1>
-  <select id="color">
-    <option value="#00aaff">青</option>
-    <option value="#ff5555">赤</option>
-    <option value="#ffff55">黄</option>
-    <option value="#55ff55">緑</option>
-    <option value="#aa55ff">紫</option>
-  </select>
-  <input id="text" type="text" placeholder="願い事をここに">
-  <button id="post">投稿</button>
-
-  <h2>みんなの短冊</h2>
-  <div id="list"></div>
-
-  <script src="./app.js"></script>
+  <h1>🎋 短冊に願いを込めて 🎋</h1>
+  <div class="form">
+    <label>お名前：<input id="name" type="text"></label><br>
+    <label>願い事：<input id="wish" type="text"></label><br>
+    <label>色を選んでね：
+      <select id="color">
+        <option value="#f66">赤</option>
+        <option value="#6cf">青</option>
+        <option value="#fc6">黄</option>
+        <option value="#6f6">緑</option>
+        <option value="#c6f">紫</option>
+      </select>
+    </label><br>
+    <button id="submit">短冊を投稿する</button>
+  </div>
+  <script src="post.js"></script>
 </body>
 </html>
+
+// ==== public/post.js ====
+document.getElementById('submit').onclick = async () => {
+  const name = document.getElementById('name').value.trim();
+  const wish = document.getElementById('wish').value.trim();
+  const color = document.getElementById('color').value;
+  if (!name || !wish) return alert('名前と願い事を入力してください');
+  await fetch('/api/tanzaku', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name, wish, color })
+  });
+  window.location.href = '/hiroba.html';
+};
+
+// ==== public/hiroba.html ====
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>みんなの短冊広場</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>🌟 みんなの願い 🌟</h1>
+  <div id="list" class="grid"></div>
+  <script src="hiroba.js"></script>
+</body>
+</html>
+
+// ==== public/hiroba.js ====
+fetch('/api/tanzaku')
+  .then(res => res.json())
+  .then(data => {
+    const list = document.getElementById('list');
+    data.forEach(t => {
+      const div = document.createElement('div');
+      div.className = 'tanzaku';
+      div.style.background = t.color;
+      div.innerHTML = `<strong>${t.name}</strong><br>${t.wish}`;
+      list.appendChild(div);
+    });
+  });
+
+// ==== public/style.css ====
+body { font-family: sans-serif; text-align: center; background: #f9f9f9; }
+input, select { margin: 5px; }
+.tanzaku {
+  width: 120px; padding: 10px; margin: 10px;
+  color: #000; background: #eee; border-radius: 8px;
+  display: inline-block; text-align: center;
+  box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+}
+.grid { display: flex; flex-wrap: wrap; justify-content: center; }
+.form { margin: 30px auto; width: 300px; }
+
+/* End of full app */
