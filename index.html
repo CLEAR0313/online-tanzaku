@@ -47,26 +47,30 @@
       box-sizing: border-box;
       border-radius: 8px;
       border: 1px dashed #8A2BE2;
-      display: inline-flex;
+      display: flex;
       flex-direction: column;
-      justify-content: flex-start;
+      justify-content: space-between;
       align-items: center;
       color: #000;
-      background-size: cover;
-      background-position: center;
+      text-align: center;
+      font-weight: bold;
+      box-shadow: 2px 2px 8px rgba(0,0,0,0.1);
     }
     .wish .text {
       flex-grow: 1;
-      padding: 5px;
+      padding: 10px 5px;
       background: transparent;
       width: 100%;
-      text-align: center;
       word-wrap: break-word;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      white-space: pre-wrap;
     }
     .wish strong {
       background: transparent;
       width: 100%;
-      text-align: center;
+      padding-top: 5px;
     }
   </style>
 </head>
