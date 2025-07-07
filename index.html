@@ -5,51 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>七夕オンライン短冊イベント</title>
   <style>
-    body {
-      background: linear-gradient(to bottom, #FFEAFF, #E0F7FF);
-      font-family: 'Segoe UI', sans-serif;
-      text-align: center;
-      padding: 20px;
-    }
-    h1 {
-      color: #8A2BE2;
-    }
-    .tanzaku-form {
-      background: #FFF0F5;
-      border-radius: 15px;
-      padding: 20px;
-      max-width: 400px;
-      margin: 0 auto;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    }
-    input, textarea, select {
-      width: 90%;
-      padding: 10px;
-      margin: 10px 0;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-    }
-    button {
-      background-color: #8A2BE2;
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-    .tanzaku-wall {
-      margin-top: 30px;
-    }
-    .wish {
-      background: #FFEFD5;
-      border: 1px dashed #8A2BE2;
-      border-radius: 8px;
-      padding: 10px;
-      margin: 10px;
-      display: inline-block;
-      max-width: 200px;
-      word-wrap: break-word;
-    }
+    body { background: linear-gradient(to bottom, #FFEAFF, #E0F7FF); font-family: 'Segoe UI', sans-serif; text-align: center; padding: 20px; }
+    h1 { color: #8A2BE2; }
+    .tanzaku-form { background: #FFF0F5; border-radius: 15px; padding: 20px; max-width: 400px; margin: 0 auto; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+    input, textarea, select { width: 90%; padding: 10px; margin: 10px 0; border-radius: 5px; border: 1px solid #ccc; }
+    button { background-color: #8A2BE2; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; }
+    .tanzaku-wall { margin-top: 30px; }
+    .wish { border: 1px dashed #8A2BE2; border-radius: 8px; padding: 10px; margin: 10px; display: inline-block; max-width: 200px; word-wrap: break-word; }
   </style>
 </head>
 <body>
@@ -65,24 +27,52 @@
   <div class="tanzaku-wall" id="wall">
     <h2>みんなの短冊🎐</h2>
   </div>
+
   <script>
+    const STORAGE_KEY = 'tanzaku_wishes';
+
+    // ページ読み込み時に保存された短冊を表示
+    window.addEventListener('DOMContentLoaded', () => {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      const wishes = saved ? JSON.parse(saved) : [];
+      wishes.forEach(w => addWishElement(w));
+    });
+
+    // ボタンクリックで短冊を追加＆保存
     function submitWish() {
-      const name = document.getElementById("name").value.trim();
+      const name = document.getElementById("name").value.trim() || '匿名';
       const wish = document.getElementById("wish").value.trim();
       const color = document.getElementById("color").value;
       if (!wish) {
         alert("願いごとを入力してください");
         return;
       }
-      const wall = document.getElementById("wall");
-      const wishElement = document.createElement("div");
-      wishElement.className = "wish";
-      wishElement.style.backgroundColor = color;
-      wishElement.innerHTML = `<strong>${name || "匿名"}</strong><br>${wish}`;
-      wall.appendChild(wishElement);
+      const newWish = { name, wish, color };
+      addWishElement(newWish);
+      saveWish(newWish);
+
+      // 入力欄をリセット
       document.getElementById("name").value = "";
       document.getElementById("wish").value = "";
       document.getElementById("color").value = "#FFEFD5";
+    }
+
+    // DOMに短冊要素を追加
+    function addWishElement({name, wish, color}) {
+      const wall = document.getElementById("wall");
+      const wishEl = document.createElement("div");
+      wishEl.className = "wish";
+      wishEl.style.backgroundColor = color;
+      wishEl.innerHTML = `<strong>${name}</strong><br>${wish}`;
+      wall.appendChild(wishEl);
+    }
+
+    // localStorageに願い事リストを更新して保存
+    function saveWish(wishObj) {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      const wishes = saved ? JSON.parse(saved) : [];
+      wishes.push(wishObj);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(wishes));
     }
   </script>
 </body>
