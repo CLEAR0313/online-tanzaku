@@ -2,85 +2,26 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>オンライン短冊</title>
+  <title>短冊投稿広場</title>
   <style>
-    body {
-      font-family: 'Yu Gothic', sans-serif;
-      background: linear-gradient(to bottom, #ffe4e1, #fff);
-      margin: 0;
-      padding: 0;
-      text-align: center;
-    }
-    header {
-      background-color: #ff69b4;
-      padding: 1em;
-      color: white;
-      font-size: 1.5em;
-    }
-    form {
-      margin: 2em auto;
-      max-width: 400px;
-    }
-    textarea {
-      width: 100%;
-      height: 100px;
-      font-size: 1em;
-    }
-    button {
-      background-color: #ff69b4;
-      color: white;
-      padding: 0.5em 1em;
-      font-size: 1em;
-      border: none;
-      cursor: pointer;
-      margin-top: 1em;
-    }
-    #gallery {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      margin: 2em auto;
-      gap: 1em;
-    }
-    .tanzaku {
-      background: url('https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/Tanzaku.svg/800px-Tanzaku.svg.png') no-repeat center/contain;
-      width: 100px;
-      height: 200px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 1em;
-      font-size: 0.9em;
-      text-align: center;
-      color: #333;
-      word-break: break-word;
-    }
+    .tanzaku { display: inline-block; width: 120px; margin: 8px; padding: 8px; color: #fff; }
   </style>
 </head>
 <body>
-  <header>🌟 オンライン短冊 🌟</header>
-  <form id="tanzakuForm">
-    <textarea id="wish" placeholder="あなたのお願いごとを入力してください"></textarea><br>
-    <button type="submit">短冊をかける✨</button>
-  </form>
-  <div id="gallery"></div>
+  <h1>短冊に願いを書いて投稿しよう🎋</h1>
+  <select id="color">
+    <option value="#00aaff">青</option>
+    <option value="#ff5555">赤</option>
+    <option value="#ffff55">黄</option>
+    <option value="#55ff55">緑</option>
+    <option value="#aa55ff">紫</option>
+  </select>
+  <input id="text" type="text" placeholder="願い事をここに">
+  <button id="post">投稿</button>
 
-  <script>
-    const form = document.getElementById('tanzakuForm');
-    const gallery = document.getElementById('gallery');
+  <h2>みんなの短冊</h2>
+  <div id="list"></div>
 
-    form.addEventListener('submit', function(e) {
-      e.preventDefault();
-      const wishText = document.getElementById('wish').value.trim();
-      if (wishText !== '') {
-        const tanzaku = document.createElement('div');
-        tanzaku.className = 'tanzaku';
-        tanzaku.textContent = wishText;
-        gallery.prepend(tanzaku);
-        document.getElementById('wish').value = '';
-      }
-    });
-  </script>
+  <script src="./app.js"></script>
 </body>
 </html>
